@@ -1,0 +1,61 @@
+{
+  "title": "Module 7 check: production",
+  "questions": [
+    {
+      "q": "What's the safe way to deploy an incompatible change to a Restate service in production?",
+      "options": [
+        "Re-register the same URL with --force",
+        "Deploy the new version at a new endpoint, register it, and remove the old one once drained",
+        "Stop all invocations first",
+        "Change the service name"
+      ],
+      "answer": 1,
+      "why": "New invocations go to the new deployment; in-flight ones finish on the deployment they're pinned to."
+    },
+    {
+      "q": "Which change is safe for running Temporal workflows WITHOUT patching?",
+      "options": [
+        "Inserting a new activity call in the middle of the workflow",
+        "Changing the implementation inside an existing activity",
+        "Renaming an activity",
+        "Removing a timer"
+      ],
+      "answer": 1,
+      "why": "Activity implementations aren't replayed; only their recorded results are. Changes to the sequence of commands in workflow code are what break replay."
+    },
+    {
+      "q": "Which alert would have caught incident 6.4 (silent retries) early?",
+      "options": [
+        "CPU above 80%",
+        "Invocations or activities retrying for longer than N minutes",
+        "Disk usage",
+        "Number of deployments"
+      ],
+      "answer": 1,
+      "why": "Durable systems retry quietly. Alert on long-retrying or paused work, and on business outcomes."
+    },
+    {
+      "q": "Why should secrets never be returned from a ctx.run step or an activity?",
+      "options": [
+        "They slow down replay",
+        "Step results are recorded in the journal/history, where anyone with access can read them",
+        "It breaks determinism",
+        "It isn't allowed by the SDK"
+      ],
+      "answer": 1,
+      "why": "Everything journaled is durable and inspectable. Read secrets inside the step and return only what's needed."
+    },
+    {
+      "q": "Which Restate SDK feature ensures only your Restate server can call your service?",
+      "options": ["ingressPrivate", "Request identity verification (withIdentityV1)", "idempotency keys", "TerminalError"],
+      "answer": 1,
+      "why": "Request identity signs each request from Restate; the service rejects unsigned ones. ingressPrivate hides a handler from the ingress but is about callers through Restate."
+    },
+    {
+      "q": "Three questions to ask at the start of almost every ticket are: cloud or self-hosted, which versions, and…",
+      "options": ["Their budget", "Where their code runs", "Their team size", "Their favorite SDK"],
+      "answer": 1,
+      "why": "Kubernetes, serverless or VMs changes how deploys, scaling and networking behave."
+    }
+  ]
+}

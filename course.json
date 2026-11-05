@@ -1,0 +1,84 @@
+{
+  "title": "Durable Execution Field Guide",
+  "subtitle": "Learn how durable execution works from first principles, then build, break and support it on Restate and Temporal.",
+  "repoUrl": "https://github.com/skeilson/durable-execution-field-guide",
+  "modules": [
+    {
+      "id": "0",
+      "folder": "modules/00-orientation",
+      "title": "Orientation",
+      "tagline": "How the course works, setting up, and just enough terminal and code reading.",
+      "hours": "1",
+      "status": "ready"
+    },
+    {
+      "id": "1",
+      "folder": "modules/01-the-problem",
+      "title": "The problem",
+      "tagline": "Why programs fail halfway, and why \"just retry\" makes it worse.",
+      "hours": "1",
+      "status": "ready",
+      "run": "npm run m1"
+    },
+    {
+      "id": "2",
+      "folder": "modules/02-core-ideas",
+      "title": "Core ideas",
+      "tagline": "Build a durable execution engine yourself, one idea at a time.",
+      "hours": "3",
+      "status": "ready",
+      "run": "npm run m2"
+    },
+    {
+      "id": "3",
+      "folder": "modules/03-restate",
+      "title": "Restate hands-on",
+      "tagline": "Build an online shop on Restate, one feature at a time, and learn to read everything it records.",
+      "hours": "5",
+      "status": "ready",
+      "run": "npm run m3"
+    },
+    {
+      "id": "4",
+      "folder": "modules/04-temporal",
+      "title": "Temporal hands-on",
+      "tagline": "Rebuild the shop on Temporal, so every difference from Restate is something you've seen.",
+      "hours": "5",
+      "status": "ready",
+      "run": "npm run m4"
+    },
+    {
+      "id": "5",
+      "folder": "modules/05-side-by-side",
+      "title": "Side by side",
+      "tagline": "Where Restate and Temporal differ, and how to talk about it with customers.",
+      "hours": "1.5",
+      "status": "ready"
+    },
+    {
+      "id": "6",
+      "folder": "modules/06-incidents",
+      "title": "Incidents",
+      "tagline": "Seven real support tickets, reproduced on purpose, diagnosed, fixed and written up.",
+      "hours": "4",
+      "status": "ready",
+      "run": "npm run m6"
+    },
+    {
+      "id": "7",
+      "folder": "modules/07-production",
+      "title": "Production",
+      "tagline": "Versioning, observability, scaling, serverless, security and hosting: what changes in production.",
+      "hours": "3",
+      "status": "ready"
+    },
+    {
+      "id": "8",
+      "folder": "modules/08-supporting-customers",
+      "title": "Supporting customers",
+      "tagline": "Read tickets, write replies customers trust, and turn solved problems into runbooks and documentation.",
+      "hours": "3",
+      "status": "ready"
+    }
+  ]
+}

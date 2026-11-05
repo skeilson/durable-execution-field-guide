@@ -1,0 +1,41 @@
+{
+  "name": "durable-execution-field-guide",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A free, hands-on course on durable execution, from first principles to real support incidents, built on Restate and Temporal.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "m1": "tsx modules/01-the-problem/code/demo.ts",
+    "m2": "tsx modules/02-core-ideas/lessons.ts",
+    "m3": "tsx modules/03-restate/lessons.ts",
+    "restate": "restate-server --base-dir .restate-data --bind-ip 127.0.0.1",
+    "shop": "tsx modules/03-restate/shop/app.ts",
+    "register": "restate deployments register http://localhost:9080 --yes --force",
+    "m4": "tsx modules/04-temporal/lessons.ts",
+    "temporal": "temporal server start-dev",
+    "worker": "tsx modules/04-temporal/shop/worker.ts",
+    "m6": "tsx modules/06-incidents/incidents.ts",
+    "reset": "tsx scripts/reset.ts",
+    "typecheck": "tsc --noEmit",
+    "build:site": "tsx site-src/build.ts"
+  },
+  "dependencies": {
+    "@restatedev/restate-sdk": "1.17.4",
+    "@temporalio/activity": "^1.24.0",
+    "@temporalio/client": "^1.24.0",
+    "@temporalio/common": "^1.24.0",
+    "@temporalio/worker": "^1.24.0",
+    "@temporalio/workflow": "^1.24.0"
+  },
+  "devDependencies": {
+    "@restatedev/restate": "1.8.1",
+    "@restatedev/restate-server": "1.8.1",
+    "@types/node": "^22.10.0",
+    "marked": "^15.0.12",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

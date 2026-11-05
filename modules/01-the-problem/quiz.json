@@ -1,0 +1,71 @@
+{
+  "title": "Module 1 check: the problem",
+  "questions": [
+    {
+      "q": "What makes a side effect different from a variable inside a program?",
+      "options": [
+        "Side effects are slower",
+        "A side effect changes something outside the program, and stopping the program doesn't undo it",
+        "Side effects can only happen once",
+        "Variables are stored on disk"
+      ],
+      "answer": 1,
+      "why": "Variables vanish when the program stops; the bank's record of a charge doesn't. That mismatch, fragile knowledge vs. permanent consequences, is the root problem."
+    },
+    {
+      "q": "A checkout crashes after charging the card. Someone reruns it from the start. What happens?",
+      "options": [
+        "It resumes and ships",
+        "It refuses to run",
+        "It reserves and charges again, then ships: the customer pays twice",
+        "Nothing, because the order already exists"
+      ],
+      "answer": 2,
+      "why": "Plain code has no memory between runs, so the rerun repeats every step that already happened."
+    },
+    {
+      "q": "Your program sends a charge request and gets a timeout. What do you know?",
+      "options": [
+        "The customer was not charged",
+        "The customer was charged",
+        "Nothing for certain: the request or the response could have been lost",
+        "The bank is down"
+      ],
+      "answer": 2,
+      "why": "This is an ambiguous failure. A timeout after sending tells you that you didn't hear back, not whether the other side acted."
+    },
+    {
+      "q": "Which kind of failure is always safe to retry?",
+      "options": [
+        "A timeout after the request was sent",
+        "A connection refused / 503 before the request was processed",
+        "A declined card",
+        "All of them, with enough backoff"
+      ],
+      "answer": 1,
+      "why": "If the request never reached the other side, nothing happened, so retrying is safe. Timeouts are ambiguous; declines are permanent."
+    },
+    {
+      "q": "Why do retries need backoff (waiting longer after each failure)?",
+      "options": [
+        "To save money on API calls",
+        "So that many callers don't flood a struggling service all at once",
+        "Because servers reject retries that come too quickly",
+        "To make the code deterministic"
+      ],
+      "answer": 1,
+      "why": "Without backoff, every caller retries immediately and together, and the flood (a retry storm) can keep a recovering service down."
+    },
+    {
+      "q": "A customer support engineer sees 'charge failed: timeout' in a customer's logs. What should they do before telling the customer whether the card was charged?",
+      "options": [
+        "Trust the log: it failed",
+        "Check the system of record (e.g., the payment provider's dashboard)",
+        "Ask the customer to retry",
+        "Restart the workflow"
+      ],
+      "answer": 1,
+      "why": "Errors after a request are ambiguous. The system of record is the ground truth."
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "title": "Module 4 check: Temporal",
+  "questions": [
+    {
+      "q": "In Temporal, how does work reach your code?",
+      "options": [
+        "The Temporal server calls your service over HTTP",
+        "Your worker polls a task queue and pulls the work",
+        "Your client runs the workflow code directly",
+        "Through a webhook"
+      ],
+      "answer": 1,
+      "why": "Temporal is pull-based: workers poll task queues. Restate is push-based: the server calls your service."
+    },
+    {
+      "q": "A customer starts a workflow and 'nothing happens': status Running, no errors. What's the first thing to check?",
+      "options": [
+        "The database",
+        "Whether any worker is polling that task queue (and namespace)",
+        "The workflow's retry policy",
+        "Whether the workflow id is unique"
+      ],
+      "answer": 1,
+      "why": "With no poller, work waits silently on the queue. `temporal task-queue describe` shows pollers."
+    },
+    {
+      "q": "Where should a call to a payment API go in Temporal?",
+      "options": ["In the workflow function", "In an activity", "In a query handler", "In the worker's startup code"],
+      "answer": 1,
+      "why": "Side effects live in activities. Workflow code must stay deterministic, and the TypeScript sandbox blocks direct I/O."
+    },
+    {
+      "q": "Why do Temporal workflows import activities with `import type`?",
+      "options": [
+        "It's faster",
+        "Workflow code runs in a sandbox and must not load activity code; it only needs names and signatures",
+        "TypeScript requires it",
+        "To avoid circular imports"
+      ],
+      "answer": 1,
+      "why": "The workflow schedules activities by name through proxyActivities; the worker runs the actual activity code outside the sandbox."
+    },
+    {
+      "q": "What is Temporal's default activity retry policy?",
+      "options": [
+        "No retries",
+        "3 attempts",
+        "Unlimited attempts with exponential backoff (1s, doubling, capped at 100s)",
+        "Retry until the workflow times out, then pause"
+      ],
+      "answer": 2,
+      "why": "Unless maximumAttempts is set, activities retry forever with backoff."
+    },
+    {
+      "q": "An activity throws ApplicationFailure.nonRetryable('Card declined'). The workflow doesn't catch it. What happens?",
+      "options": [
+        "The activity retries forever",
+        "The workflow fails",
+        "The workflow task is retried",
+        "The workflow pauses"
+      ],
+      "answer": 1,
+      "why": "Non-retryable failures skip retries and surface as ActivityFailure in the workflow; unhandled, the workflow fails."
+    },
+    {
+      "q": "Workflow code (not an activity) throws a TypeError because of a bug. What happens?",
+      "options": [
+        "The workflow fails immediately",
+        "The workflow task fails and is retried; the workflow stays Running until a fix is deployed",
+        "The error is ignored",
+        "Temporal restarts the workflow from the beginning"
+      ],
+      "answer": 1,
+      "why": "Only Temporal failure types (like ApplicationFailure) fail a workflow. Other errors are treated as bugs: the workflow task is retried so work isn't lost."
+    },
+    {
+      "q": "Which message kind lets a client change a workflow's state AND get a result back?",
+      "options": ["Signal", "Query", "Update", "Heartbeat"],
+      "answer": 2,
+      "why": "Signals are fire-and-forget, queries are read-only, updates do both."
+    },
+    {
+      "q": "Restate has virtual objects for per-entity state. What's the usual Temporal equivalent?",
+      "options": [
+        "A database table",
+        "A long-running entity workflow per entity, changed by signals/updates and read by queries",
+        "A child workflow per request",
+        "A task queue per entity"
+      ],
+      "answer": 1,
+      "why": "One workflow per entity (e.g. workflow id cart-dana) processes its messages one at a time, much like a virtual object."
+    },
+    {
+      "q": "A cart workflow has been receiving signals for months. Why might it need continue-as-new?",
+      "options": [
+        "To change its workflow id",
+        "Its event history keeps growing; histories have size limits and long ones replay slowly",
+        "Signals expire after 30 days",
+        "To move it to another namespace"
+      ],
+      "answer": 1,
+      "why": "Continue-as-new starts a fresh run with the same id and an empty history, carrying state forward."
+    },
+    {
+      "q": "In Temporal's TypeScript SDK, is `Math.random()` safe inside workflow code?",
+      "options": [
+        "No, it always breaks replay",
+        "Yes: the sandbox replaces it with a deterministic, seeded version",
+        "Only inside a query",
+        "Only with patched()"
+      ],
+      "answer": 1,
+      "why": "The sandbox makes Math.random and Date replay-safe. Code changes under running workflows are a separate problem."
+    },
+    {
+      "q": "After a deploy, some running workflows fail their workflow tasks with a non-determinism error. What's the best first move?",
+      "options": [
+        "Terminate the affected workflows",
+        "Roll back the deploy, then reintroduce the change behind patched() or Worker Versioning",
+        "Delete their histories",
+        "Increase the retry policy"
+      ],
+      "answer": 1,
+      "why": "Rolling back lets stuck workflows replay on compatible code. Then make the change safely and add replay tests."
+    },
+    {
+      "q": "What does `Worker.runReplayHistory` let you do?",
+      "options": [
+        "Restart a failed workflow",
+        "Check, offline, whether new workflow code can replay a saved real history without non-determinism",
+        "Speed up slow workflows",
+        "Copy a workflow to another namespace"
+      ],
+      "answer": 1,
+      "why": "Replay tests catch breaking changes before they reach production."
+    }
+  ]
+}

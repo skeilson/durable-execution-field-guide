@@ -1,0 +1,50 @@
+{
+  "title": "Module 5 check: side by side",
+  "questions": [
+    {
+      "q": "A Temporal user asks for Restate's equivalent of an activity. What do you tell them?",
+      "options": ["A virtual object", "ctx.run(...) inside the handler", "A deployment", "An awakeable"],
+      "answer": 1,
+      "why": "Both are 'a side effect, executed and recorded'. Restate keeps them inline; Temporal keeps them in separate functions."
+    },
+    {
+      "q": "Your code is down. Which platform reports errors, and which waits silently?",
+      "options": [
+        "Restate reports connection errors; Temporal waits silently on the task queue",
+        "Temporal reports errors; Restate waits silently",
+        "Both report errors",
+        "Both wait silently"
+      ],
+      "answer": 0,
+      "why": "Push (Restate) means the server tries to call you and records the failure. Pull (Temporal) means work waits until a worker asks for it."
+    },
+    {
+      "q": "What's the closest Temporal equivalent of a Restate virtual object?",
+      "options": ["A task queue", "An entity workflow with signals, updates and queries", "A namespace", "An activity"],
+      "answer": 1,
+      "why": "One long-running workflow per entity, changed by messages and read by queries."
+    },
+    {
+      "q": "How does each platform keep in-flight work on compatible code by default?",
+      "options": [
+        "Both use patching",
+        "Restate pins invocations to their deployment; Temporal needs patched() or Worker Versioning",
+        "Neither does anything",
+        "Temporal pins; Restate needs patching"
+      ],
+      "answer": 1,
+      "why": "Restate's deployments are immutable and invocations are pinned. In Temporal any worker may replay any execution unless versioning is configured."
+    },
+    {
+      "q": "A prospect runs everything on serverless functions. Which architectural property makes Restate a natural fit?",
+      "options": [
+        "It has more SDKs",
+        "Push-based invocation plus suspension: functions only run while there's work",
+        "It doesn't need idempotency keys",
+        "It has no server"
+      ],
+      "answer": 1,
+      "why": "Restate calls the function when there's work and suspends waiting invocations, so nothing runs (or bills) while waiting."
+    }
+  ]
+}

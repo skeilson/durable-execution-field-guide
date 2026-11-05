@@ -1,0 +1,115 @@
+{
+  "title": "Module 2 check: core ideas",
+  "questions": [
+    {
+      "q": "In one sentence, what is the journal?",
+      "options": [
+        "A log file for debugging",
+        "A durable record of each completed step and its result, written before moving on",
+        "A list of steps the workflow plans to run",
+        "A copy of the workflow's code"
+      ],
+      "answer": 1,
+      "why": "The journal (Temporal: event history) records results of completed steps. Writing before moving on is what makes it trustworthy."
+    },
+    {
+      "q": "During replay, what happens when the code reaches a step that's already in the journal?",
+      "options": [
+        "The step runs again to double-check",
+        "The engine returns the recorded result without doing the work",
+        "The workflow stops",
+        "The journal entry is deleted"
+      ],
+      "answer": 1,
+      "why": "That's replay: fast-forwarding through finished steps using their recorded results, until reaching new territory."
+    },
+    {
+      "q": "A workflow crashes after the bank charged the card but before the engine journaled it. On restart, the charge step...",
+      "options": [
+        "is skipped",
+        "runs again",
+        "fails with an error",
+        "is marked as unknown"
+      ],
+      "answer": 1,
+      "why": "Nothing is recorded, so the engine runs the step again. Durable execution is at-least-once per step. This is the gap."
+    },
+    {
+      "q": "What makes a good idempotency key for a step?",
+      "options": [
+        "A random UUID generated each time the step runs",
+        "The current timestamp",
+        "Something stable and unique to this step of this workflow, like '<workflowId>/<stepName>'",
+        "The customer's email address"
+      ],
+      "answer": 2,
+      "why": "The key must be the same on every retry and replay of this step, and different from every other step. Random or time-based keys change on retry, defeating the purpose."
+    },
+    {
+      "q": "'Durable execution plus idempotency gives effectively exactly-once.' Which half handles a crash in the MIDDLE of a step?",
+      "options": [
+        "Durable execution",
+        "Idempotency",
+        "Neither",
+        "Retries"
+      ],
+      "answer": 1,
+      "why": "The engine can't know whether the interrupted step's effect happened, so it runs the step again. The idempotency key makes that repeat harmless."
+    },
+    {
+      "q": "A card is declined. What should the engine do?",
+      "options": [
+        "Retry with backoff until it succeeds",
+        "Retry exactly three times",
+        "Stop retrying: a decline is a permanent (terminal) error",
+        "Skip the step and continue"
+      ],
+      "answer": 2,
+      "why": "Retrying can't change a decline. The developer marks it as terminal (Restate: TerminalError; Temporal: non-retryable failure)."
+    },
+    {
+      "q": "By default, what does Restate do when a step keeps failing with an ordinary (non-terminal) error?",
+      "options": [
+        "Fails the invocation after 3 attempts",
+        "Retries with growing delays, and after the maximum attempts pauses the invocation for a human",
+        "Retries immediately in a tight loop forever",
+        "Skips the step"
+      ],
+      "answer": 1,
+      "why": "Restate's default policy retries with exponential backoff and, when attempts run out, pauses rather than failing, so nothing is lost and a person can fix and resume."
+    },
+    {
+      "q": "Which line breaks determinism inside workflow code?",
+      "options": [
+        "await ctx.step('charge', () => bank.charge(id, 4999))",
+        "if (Math.random() < 0.5) { await ctx.step('gift wrap', ...) }",
+        "const roll = await ctx.random('roll')",
+        "console.log('starting')"
+      ],
+      "answer": 1,
+      "why": "A random decision outside a step can come out differently on replay, so the code asks for different steps than the journal recorded."
+    },
+    {
+      "q": "A deploy adds a step in the middle of a workflow. Some in-flight workflows fail with a non-determinism error; others are fine. Why only some?",
+      "options": [
+        "The deploy only reached some servers",
+        "Workflows that had already passed the point where the step was added have journals that no longer line up with the new code",
+        "Non-determinism errors are random",
+        "The fine ones haven't been replayed yet"
+      ],
+      "answer": 1,
+      "why": "Whether a code change breaks a workflow depends on how far it had gotten. That's what makes these tickets look intermittent."
+    },
+    {
+      "q": "What does a durable timer record in the journal?",
+      "options": [
+        "How long to wait",
+        "The time to wake up",
+        "Nothing; timers aren't journaled",
+        "How many times it has been restarted"
+      ],
+      "answer": 1,
+      "why": "Recording the wake-up time means a replay waits only for what's left, or continues immediately if the deadline has passed."
+    }
+  ]
+}

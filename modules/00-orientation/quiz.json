@@ -1,0 +1,39 @@
+{
+  "title": "Module 0 check: ready to go?",
+  "questions": [
+    {
+      "q": "A command says 'Missing script: m1'. What's the most likely cause?",
+      "options": [
+        "The course is broken",
+        "You're not in the project folder (the one containing package.json)",
+        "Node.js is too new",
+        "You need to restart your computer"
+      ],
+      "answer": 1,
+      "why": "npm looks for scripts in the package.json of the current folder. Run pwd, then cd into the project."
+    },
+    {
+      "q": "How do you stop a program running in the terminal?",
+      "options": ["Ctrl + Z", "Ctrl + C", "Type 'exit'", "Close the laptop"],
+      "answer": 1,
+      "why": "Ctrl + C stops the running program. You'll also use it to crash services on purpose."
+    },
+    {
+      "q": "In TypeScript, what does `await` mean?",
+      "options": [
+        "Pause the program forever",
+        "Do this, and wait until it's finished before moving to the next line",
+        "Run this in the background",
+        "Retry this until it works"
+      ],
+      "answer": 1,
+      "why": "await waits for something slow, like a call to another system, to finish before continuing."
+    },
+    {
+      "q": "If `await bank.charge(...)` throws an error and nothing catches it, does the next line run?",
+      "options": ["Yes", "No"],
+      "answer": 1,
+      "why": "An uncaught error stops the function at that line."
+    }
+  ]
+}

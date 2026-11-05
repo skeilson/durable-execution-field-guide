@@ -1,0 +1,74 @@
+# Runs every hands-on lesson and incident against real servers on each push,
+# so the course's claims stay true as Restate and Temporal evolve.
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  CI: "true" # lessons skip their "press Enter" pauses
+
+jobs:
+  foundations-and-restate:
+    name: Modules 1–3 and incidents (Restate)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - name: Module 1 · the problem
+        run: npm run m1
+      - name: Module 2 · core ideas
+        run: npm run m2
+      - name: Module 3 · Restate
+        run: npm run m3
+      - name: Module 6 · incidents
+        run: npm run m6
+      - name: Show logs on failure
+        if: failure()
+        run: tail -n 100 .runtime/*.log || true
+
+  temporal:
+    name: Module 4 (Temporal)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install the Temporal CLI
+        run: |
+          mkdir -p "$HOME/temporal-cli"
+          curl -sSfL "https://temporal.download/cli/archive/latest?platform=linux&arch=amd64" -o temporal.tar.gz
+          tar -xzf temporal.tar.gz -C "$HOME/temporal-cli"
+          dirname "$(find "$HOME/temporal-cli" -type f -name temporal | head -n 1)" >> "$GITHUB_PATH"
+      - run: temporal --version
+      - name: Module 4 · Temporal
+        run: npm run m4
+      - name: Show logs on failure
+        if: failure()
+        run: tail -n 100 .runtime/*.log || true
+
+  site:
+    name: Build the course site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:site
+      - name: Check generated files are committed
+        run: git diff --exit-code -- modules site || (echo "Run 'npm run build:site' and commit the result." && exit 1)

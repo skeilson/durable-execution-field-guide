@@ -1,0 +1,154 @@
+{
+  "title": "Module 3 check: Restate",
+  "questions": [
+    {
+      "q": "A client wants to run Orders/checkout. Where does it send the request?",
+      "options": [
+        "Directly to the service on port 9080",
+        "To the Restate server's ingress on port 8080, which calls the service",
+        "To the admin API on port 9070",
+        "It publishes a message to a queue"
+      ],
+      "answer": 1,
+      "why": "Clients always go through Restate. Restate records the invocation and pushes the work to the service."
+    },
+    {
+      "q": "You changed a handler's code but Restate still seems to run the old version during development. What's the likely fix?",
+      "options": [
+        "Restart the Restate server",
+        "Re-register the deployment (with --force in development)",
+        "Clear the browser cache",
+        "Delete the journal"
+      ],
+      "answer": 1,
+      "why": "Restate routes to registered deployments. Re-registering picks up the new handlers; Module 7 covers how production deploys new versions safely."
+    },
+    {
+      "q": "Inside a handler, where should a call to a payment API go?",
+      "options": [
+        "Directly in the handler body",
+        "Inside ctx.run(...)",
+        "Inside a shared handler",
+        "In a separate cron job"
+      ],
+      "answer": 1,
+      "why": "Side effects go in ctx.run so they're journaled once. Outside ctx.run, they'd repeat on every replay."
+    },
+    {
+      "q": "describe shows an invocation 'backing-off' with 'Connection refused' on the service URL. What's the most likely cause?",
+      "options": [
+        "A bug in the handler",
+        "The service is down or unreachable",
+        "The journal is corrupted",
+        "A TerminalError was thrown"
+      ],
+      "answer": 1,
+      "why": "Restate can't reach the service. Bring it back and the invocation resumes from its journal."
+    },
+    {
+      "q": "What does `ctx.serviceSendClient(emails).send(...)` guarantee?",
+      "options": [
+        "The email is sent before the next line runs",
+        "Once Restate accepts the send, the Emails handler will run, even if the caller crashes",
+        "Nothing; it's fire and forget with no guarantee",
+        "The caller receives the email's result"
+      ],
+      "answer": 1,
+      "why": "Sends are durable: the caller doesn't wait, but delivery is guaranteed."
+    },
+    {
+      "q": "A client sends the same request twice with the same idempotency-key header. What does Restate do with the second?",
+      "options": [
+        "Starts a second invocation",
+        "Rejects it with an error",
+        "Attaches to or returns the result of the first invocation",
+        "Queues it to run after the first"
+      ],
+      "answer": 2,
+      "why": "Restate deduplicates on the key (for a retention period, 1 day by default)."
+    },
+    {
+      "q": "A handler throws an ordinary Error because a supplier API returns 500. What does Restate do by default?",
+      "options": [
+        "Fails the invocation immediately",
+        "Retries with growing delays, eventually pausing if it keeps failing",
+        "Skips the step",
+        "Retries exactly 3 times then fails"
+      ],
+      "answer": 1,
+      "why": "Anything that isn't a TerminalError is retried according to the retry policy; the default ends by pausing."
+    },
+    {
+      "q": "An invocation is 'paused'. What should a support engineer suggest?",
+      "options": [
+        "Delete it and ask the user to try again",
+        "Fix the cause shown in its last error, then `restate invocations resume`",
+        "Wait; it will retry on its own soon",
+        "Restart the Restate server"
+      ],
+      "answer": 1,
+      "why": "Paused invocations stop retrying and keep their journal. Once the cause is fixed, resume continues from where it stopped."
+    },
+    {
+      "q": "A Reminders invocation is 'suspended' on a timer, and the service is shut down. What happens?",
+      "options": [
+        "The invocation fails",
+        "Restate reports errors until the service is back",
+        "Nothing until the timer fires; then Restate needs the service and retries if it's still down",
+        "The timer is reset"
+      ],
+      "answer": 2,
+      "why": "Suspended invocations don't need the service. Restate holds the timer."
+    },
+    {
+      "q": "Two 'add' requests for Cart/dana arrive at the same moment. What happens?",
+      "options": [
+        "They run at the same time and one change may be lost",
+        "They run one after the other; state can't be overwritten",
+        "The second is rejected",
+        "They're merged into one request"
+      ],
+      "answer": 1,
+      "why": "Exclusive handlers run one at a time per key. Different keys run in parallel."
+    },
+    {
+      "q": "Which Restate feature fits 'a return approval that waits days for a human decision, once per return id'?",
+      "options": ["A service", "A virtual object", "A workflow with a durable promise", "A delayed send"],
+      "answer": 2,
+      "why": "Workflows run once per key and can wait on durable promises that other handlers complete."
+    },
+    {
+      "q": "A payment provider will call your webhook later with the result. How does a Restate handler wait for it?",
+      "options": [
+        "Poll the provider every second inside ctx.run",
+        "Create an awakeable, give its id to the provider, await it; the webhook resolves it",
+        "Use ctx.sleep for an hour and hope",
+        "Store the order in a database and check it with a cron job"
+      ],
+      "answer": 1,
+      "why": "Awakeables are durable callback tickets, completed via Restate's HTTP API or ctx.resolveAwakeable."
+    },
+    {
+      "q": "In the saga, when do compensations run?",
+      "options": [
+        "On every error",
+        "Only when a step fails with a TerminalError",
+        "Only when the service crashes",
+        "Never automatically"
+      ],
+      "answer": 1,
+      "why": "Transient errors are retried, not undone. Terminal errors trigger the catch block that runs compensations in reverse."
+    },
+    {
+      "q": "`sys_invocation` shows status 'completed'. Did it succeed?",
+      "options": [
+        "Yes, always",
+        "Not necessarily: check completion_result (success or failure)",
+        "No, completed means it was cancelled",
+        "Only if retry_count is 0"
+      ],
+      "answer": 1,
+      "why": "Completed means finished. Failed invocations are completed too, with completion_result = 'failure'."
+    }
+  ]
+}
