@@ -1,5 +1,5 @@
 # Durable Execution Field Guide
-[![CI](https://github.com/skeilson/durable-execution-field-guide/actions/workflows/ci.yml/badge.svg)](https://github.com/skeilson/durable-execution-field-guide/actions/workflows/ci.yml)i
+[![CI](https://github.com/skeilson/durable-execution-field-guide/actions/workflows/ci.yml/badge.svg)](https://github.com/skeilson/durable-execution-field-guide/actions/workflows/ci.yml)
 
 **A free, hands-on course on durable execution, from first principles to real support incidents, built on [Restate](https://restate.dev) and [Temporal](https://temporal.io).**
 **[Open the interactive course →](https://skeilson.github.io/durable-execution-field-guide/)**
