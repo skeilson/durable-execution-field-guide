@@ -2,6 +2,7 @@
 [![CI](https://github.com/skeilson/durable-execution-field-guide/actions/workflows/ci.yml/badge.svg)](https://github.com/skeilson/durable-execution-field-guide/actions/workflows/ci.yml)
 
 **A free, hands-on course on durable execution, from first principles to real support incidents, built on [Restate](https://restate.dev) and [Temporal](https://temporal.io).**
+
 **[Open the interactive course →](https://skeilson.github.io/durable-execution-field-guide/)**
 
 Durable execution lets ordinary code survive crashes, restarts and deploys: every step's result is recorded, and after a failure the code replays from that record instead of starting over. It's becoming the backbone of payments, order pipelines and AI agents.
